@@ -12,7 +12,7 @@ There's no GitHub repo yet, so changes go live by uploading this folder to Verce
 - `help.html`: the free help hour page ("I'm drowning, I can't pay you, please just help me")
 - `styles.css`: all styles. The colors are at the top.
 - `site.js`: the sliding banner, custom cursor, booking calendar and forms
-- `images/`: photos (AVIF), the pineapple drawing (stored as five strips, `pineapple-1.webp` to `pineapple-5.webp`), the logo and a link preview image (`og.jpg`, not used yet)
+- `images/`: photos, the pineapple drawing, the logo and the link preview image (`og.jpg`)
 
 ## Common edits
 
