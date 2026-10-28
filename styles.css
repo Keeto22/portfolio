@@ -99,7 +99,9 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero-place { margin-top: 48px; display: flex; align-items: center; gap: 16px; font-size: 15px; line-height: 1.5; color: var(--muted); }
 .hero-place img { flex-shrink: 0; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--wing); }
 .hero-place strong { display: block; font-size: 16px; color: var(--ink); }
+.hero-visual { margin: 0; }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
+.art-note { max-width: 21em; margin: 20px auto 0; font-size: 15px; line-height: 1.5; color: var(--muted); text-align: center; text-wrap: balance; }
 .sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: var(--lime); transform: translate(-50%, -44%); }
 .pineapple {
   position: relative; height: 600px; aspect-ratio: 389 / 1000;
