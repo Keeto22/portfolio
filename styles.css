@@ -96,14 +96,15 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .hero h1 { margin-bottom: 36px; }
 .hero .lede { margin-bottom: 44px; }
-.hero-place { margin-top: 48px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--muted); }
-.hero-place::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--wing); box-shadow: 0 0 0 5px rgba(76, 199, 230, .2); }
+.hero-place { margin-top: 48px; display: flex; align-items: center; gap: 16px; font-size: 15px; line-height: 1.5; color: var(--muted); }
+.hero-place img { flex-shrink: 0; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--wing); }
+.hero-place strong { display: block; font-size: 16px; color: var(--ink); }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
 .sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: var(--lime); transform: translate(-50%, -44%); }
 .pineapple {
   position: relative; height: 600px; aspect-ratio: 389 / 1000;
   background: linear-gradient(180deg, var(--lagoon) 0 40%, var(--ocean) 50% 100%);
-  -webkit-mask: url(images/pineapple.png) center / contain no-repeat; mask: url(images/pineapple.png) center / contain no-repeat;
+  -webkit-mask: url(images/pineapple.webp) center / contain no-repeat; mask: url(images/pineapple.webp) center / contain no-repeat;
 }
 .badge {
   position: absolute; left: 2%; bottom: 4%; width: 148px; height: 148px; border-radius: 50%;
@@ -306,6 +307,10 @@ textarea { min-height: 130px; resize: vertical; }
 .story p:not(.eyebrow) { font-size: clamp(19px, 1.5vw, 21px); color: var(--muted); }
 .story p + p { margin-top: 22px; }
 .story .offer { color: var(--ink) !important; font-weight: 600; }
+.signoff { display: flex; align-items: center; gap: 16px; margin-top: 32px; }
+.signoff img { flex-shrink: 0; width: 64px; height: 64px; border-radius: 50%; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--lime); }
+.story .signoff p { font-size: 15px; line-height: 1.5; }
+.signoff strong { display: block; font-size: 17px; color: var(--ink); }
 @media (max-width: 900px) { .story .wrap { grid-template-columns: 1fr; } }
 
 .hour { padding-top: 0; }

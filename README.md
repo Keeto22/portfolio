@@ -1,6 +1,10 @@
 # Mark Mathany: portfolio site
 
-A static website with no build step. It's hosted on Vercel, and every push to `main` goes live.
+A static website with no build step. It's hosted on Vercel as the project `markmathany`.
+
+## Publishing changes
+
+There's no GitHub repo yet, so changes go live by uploading this folder to Vercel, for example with `npx vercel deploy --prod` run from this folder. If you later connect a GitHub repo to the Vercel project, every push to `main` will go live on its own.
 
 ## Files
 
