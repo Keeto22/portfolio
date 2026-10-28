@@ -169,6 +169,7 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .about h2 { margin-bottom: 36px; }
 .about p { max-width: 36em; color: var(--muted); }
 .about p + p { margin-top: 20px; }
+.about .mission { color: var(--ink); font-weight: 600; }
 .credentials { margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--line); }
 .credentials h3 { font-size: 18px; }
 .credentials .note { margin-top: 6px; font-size: 15px; }
