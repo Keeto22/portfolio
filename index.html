@@ -165,35 +165,37 @@
           <li><strong>Plan</strong>I propose a clear scope, timeline and price.</li>
           <li><strong>Ongoing partnership</strong>I help you answer questions and keep your data in good shape.</li>
         </ol>
-        <div class="lifeline">
+      </div>
+      <div class="inquiry-side">
+        <!-- To receive messages without opening an email app, create a free form at formspree.io and paste its URL into data-endpoint. -->
+        <form class="reveal" id="inquiry-form" data-endpoint="" data-subject="New inquiry">
+          <div class="row">
+            <label class="field">Name<input name="name" required autocomplete="name"></label>
+            <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
+          </div>
+          <div class="row">
+            <label class="field">Organization<input name="organization" autocomplete="organization"></label>
+            <label class="field">I'm interested in
+              <select name="interest">
+                <option>Data management</option>
+                <option>A specific problem</option>
+                <option>Dashboards and reporting</option>
+                <option>Ethical AI practices</option>
+                <option>Speaking or training</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">What's going on with your data?<textarea name="message" required placeholder="What questions are you trying to answer? Where does your data live today?"></textarea></label>
+          <button class="btn" type="submit">Start the conversation <span class="arrow" aria-hidden="true">→</span></button>
+          <p class="form-note form-status" aria-live="polite">Prefer email? <button class="show-email" type="button" data-show-email>Reveal my email address</button></p>
+        </form>
+        <div class="lifeline reveal">
           <p class="lifeline-title">Can't afford help right now?</p>
           <p>If your business is struggling and you can't pay for help, I'll give you an hour of my time, free.</p>
           <a class="btn plea" href="help.html">I'm drowning, I can't pay you, please just help me <span class="arrow" aria-hidden="true">→</span></a>
         </div>
       </div>
-      <!-- To receive messages without opening an email app, create a free form at formspree.io and paste its URL into data-endpoint. -->
-      <form class="reveal" id="inquiry-form" data-endpoint="" data-subject="New inquiry">
-        <div class="row">
-          <label class="field">Name<input name="name" required autocomplete="name"></label>
-          <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
-        </div>
-        <div class="row">
-          <label class="field">Organization<input name="organization" autocomplete="organization"></label>
-          <label class="field">I'm interested in
-            <select name="interest">
-              <option>Data management</option>
-              <option>A specific problem</option>
-              <option>Dashboards and reporting</option>
-              <option>Ethical AI practices</option>
-              <option>Speaking or training</option>
-              <option>Not sure yet</option>
-            </select>
-          </label>
-        </div>
-        <label class="field">What's going on with your data?<textarea name="message" required placeholder="What questions are you trying to answer? Where does your data live today?"></textarea></label>
-        <button class="btn" type="submit">Start the conversation <span class="arrow" aria-hidden="true">→</span></button>
-        <p class="form-note form-status" aria-live="polite">Prefer email? <button class="show-email" type="button" data-show-email>Reveal my email address</button></p>
-      </form>
     </div>
   </section>
 
