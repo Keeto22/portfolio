@@ -97,6 +97,8 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .hero h1 { margin-bottom: 36px; }
 .hero .lede { margin-bottom: 44px; }
+/* On phones the three roles fit on one line once the short rule is dropped */
+@media (max-width: 600px) { .hero .eyebrow { font-size: 12px; letter-spacing: .12em; } .hero .eyebrow::before { display: none; } }
 .hero-visual { margin: 0; }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
 .art-note { max-width: 21em; margin: 20px auto 0; font-size: 15px; line-height: 1.5; color: var(--muted); text-align: center; text-wrap: balance; }
@@ -121,7 +123,7 @@ section { padding-block: clamp(96px, 12vw, 176px); }
   .hero .wrap { grid-template-columns: 1fr; }
   .hero-art { min-height: 440px; }
   .pineapple { height: 420px; }
-  .sun { width: 320px; }
+  .sun { width: min(320px, 100%); }
   .badge { width: 120px; height: 120px; left: 0; }
 }
 

@@ -21,3 +21,4 @@ The Vercel project is connected to this GitHub repo, so every push to `main` goe
 - **Recommendations:** in `index.html`, remove `hidden` from the recommendations section and fill in each quote with the person's words, name, role and organization.
 - **Certificates:** in the About section of `index.html`.
 - **Email address:** set once near the top of `site.js` (`EMAIL`), in two parts so bots that collect addresses from websites don't find it. Visitors see it after clicking "Reveal email".
+- **Link preview image:** after replacing `images/og.jpg`, raise the `?v=` number in the `og:image` tag of both pages, so sites that saved the old preview fetch the new one.
