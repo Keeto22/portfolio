@@ -96,9 +96,6 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .hero h1 { margin-bottom: 36px; }
 .hero .lede { margin-bottom: 44px; }
-.hero-place { margin-top: 48px; display: flex; align-items: center; gap: 16px; font-size: 15px; line-height: 1.5; color: var(--muted); }
-.hero-place img { flex-shrink: 0; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--wing); }
-.hero-place strong { display: block; font-size: 16px; color: var(--ink); }
 .hero-visual { margin: 0; }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
 .art-note { max-width: 21em; margin: 20px auto 0; font-size: 15px; line-height: 1.5; color: var(--muted); text-align: center; text-wrap: balance; }
@@ -173,6 +170,7 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 @media (max-width: 760px) { .q { grid-template-columns: 1fr; } }
 
 /* ---------- Speaking ---------- */
+.speaking { background: var(--cloud); }
 .speaking .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: center; }
 .speaking img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 70% 50%; border-radius: 24px; }
 .speaking figcaption { margin-top: 14px; font-size: 15px; color: var(--muted); }
