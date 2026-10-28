@@ -104,7 +104,14 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .pineapple {
   position: relative; height: 600px; aspect-ratio: 389 / 1000;
   background: linear-gradient(180deg, var(--lagoon) 0 40%, var(--ocean) 50% 100%);
-  -webkit-mask: url(images/pineapple.webp) center / contain no-repeat; mask: url(images/pineapple.webp) center / contain no-repeat;
+  /* The drawing is stored as five overlapping strips (pineapple-1 to -5) to keep each file small. */
+  -webkit-mask-image: url(images/pineapple-1.webp), url(images/pineapple-2.webp), url(images/pineapple-3.webp), url(images/pineapple-4.webp), url(images/pineapple-5.webp);
+  mask-image: url(images/pineapple-1.webp), url(images/pineapple-2.webp), url(images/pineapple-3.webp), url(images/pineapple-4.webp), url(images/pineapple-5.webp);
+  -webkit-mask-size: 100% 20.4%, 100% 20.8%, 100% 20.8%, 100% 20.8%, 100% 20.4%;
+  mask-size: 100% 20.4%, 100% 20.8%, 100% 20.8%, 100% 20.8%, 100% 20.4%;
+  -webkit-mask-position: 0 0, 0 24.7475%, 0 50%, 0 75.2525%, 0 100%;
+  mask-position: 0 0, 0 24.7475%, 0 50%, 0 75.2525%, 0 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
 .badge {
   position: absolute; left: 2%; bottom: 4%; width: 148px; height: 148px; border-radius: 50%;
