@@ -1,6 +1,6 @@
 # Mark Mathany: portfolio site
 
-A static website with no build step. It's hosted on Vercel as the project `markmathany` and lives at https://markmathany.com.
+A static website with no build step. It's hosted on Vercel as the project `markmathany` and lives at https://www.markmathany.com (markmathany.com redirects there).
 
 ## Publishing changes
 
