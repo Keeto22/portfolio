@@ -34,9 +34,8 @@
     <a class="logo" href="#top" aria-label="Mark Mathany, home"><span class="logo-mark" aria-hidden="true"></span>Mark Mathany</a>
     <nav class="nav" aria-label="Main">
       <a href="#about">About</a>
+      <a href="#work-with-me">Contact</a>
       <a href="#speaking">Speaking</a>
-      <a href="#services">Services</a>
-      <a href="#questions">Work</a>
       <a class="btn" href="#book">Book a meeting</a>
     </nav>
   </div>
@@ -172,7 +171,7 @@
         </div>
       </div>
       <!-- To receive messages without opening an email app, create a free form at formspree.io and paste its URL into data-endpoint. -->
-      <form class="reveal" id="inquiry-form" data-endpoint="" data-email="markjmathany@gmail.com" data-subject="New inquiry">
+      <form class="reveal" id="inquiry-form" data-endpoint="" data-subject="New inquiry">
         <div class="row">
           <label class="field">Name<input name="name" required autocomplete="name"></label>
           <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
@@ -192,7 +191,7 @@
         </div>
         <label class="field">What's going on with your data?<textarea name="message" required placeholder="What questions are you trying to answer? Where does your data live today?"></textarea></label>
         <button class="btn" type="submit">Start the conversation <span class="arrow" aria-hidden="true">→</span></button>
-        <p class="form-note form-status" aria-live="polite">Prefer email? Write to <a href="mailto:markjmathany@gmail.com">markjmathany@gmail.com</a>.</p>
+        <p class="form-note form-status" aria-live="polite">Prefer email? <button class="show-email" type="button" data-show-email>Reveal my email address</button></p>
       </form>
     </div>
   </section>
@@ -229,83 +228,6 @@
     </div>
   </section>
 
-  <!-- ===== STATEMENT ===== -->
-  <section class="statement">
-    <div class="wrap reveal">
-      <h2>The human layer for <em><span class="nw">non-human</span> intelligence.</em></h2>
-      <p>Data and AI tools are powerful, but they still need someone to ask the right questions, check the answers and explain what they mean. That's the work I do. I also help teams use AI ethically, so it takes on the repetitive work and people keep doing the human jobs.</p>
-    </div>
-  </section>
-
-  <!-- ===== SERVICES ===== -->
-  <section class="services" id="services">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">Services</p>
-        <h2>How I help</h2>
-      </div>
-      <div class="services-list">
-        <article class="service reveal"><span class="num">01</span><h3>Complex problem analysis</h3><p>When the answer isn't obvious, I dig into your data, test the assumptions, and come back with findings you can act on.</p></article>
-        <article class="service reveal"><span class="num">02</span><h3>Data management</h3><p>Clean, organized, trustworthy data. I help you structure, document and look after it so your team stops second-guessing the numbers.</p></article>
-        <article class="service reveal"><span class="num">03</span><h3>Dashboards and reporting</h3><p>Reports that show leaders what matters at a glance, built to stay up to date without extra work.</p></article>
-        <article class="service reveal"><span class="num">04</span><h3>Ethical AI for your team</h3><p>I help you understand how to use AI responsibly: where it can take repetitive work off your team's plate, and where the work should stay human. AI should support your people, not replace them.</p></article>
-        <article class="service reveal"><span class="num">05</span><h3>Speaking and training</h3><p>Keynotes, workshops and hands-on training that make data and AI understandable and useful for everyone, not just analysts.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== CLIENTS ===== -->
-  <section class="clients" aria-label="Organizations I've worked with">
-    <div class="wrap reveal">
-      <p class="eyebrow">Organizations I've worked with</p>
-      <ul class="client-list">
-        <li>American Admin</li>
-        <li>All PEO</li>
-        <li>Allstar Labor &amp; Staffing</li>
-        <li>The Send</li>
-        <li>Vallance Construction</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ===== QUESTIONS ===== -->
-  <section class="questions" id="questions">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">Work</p>
-        <h2>Questions I help answer</h2>
-        <p class="lede">Every engagement starts with a real question. Here are a few I'm asked most often.</p>
-      </div>
-      <!-- To add a case study: copy one .q block and describe the client's question, what you did, and the result. -->
-      <div class="q-list">
-        <article class="q reveal">
-          <h3>Why are customers leaving?</h3>
-          <div><span class="tag">Churn analysis</span><p>Bring sales, support and usage data together to find what actually drives people away, and the few changes that will move the number.</p></div>
-        </article>
-        <article class="q reveal">
-          <h3>Which numbers can we trust?</h3>
-          <div><span class="tag">Data management</span><p>Untangle duplicate spreadsheets and conflicting reports into one reliable source of truth that the whole team uses.</p></div>
-        </article>
-        <article class="q reveal">
-          <h3>Where should we invest next?</h3>
-          <div><span class="tag">Forecasting</span><p>Model the options with your own data so the decision rests on evidence, not the loudest opinion in the room.</p></div>
-        </article>
-        <article class="q reveal">
-          <h3>How do we use AI the right way?</h3>
-          <div><span class="tag">Ethical AI</span><p>Decide where AI helps and where people should stay in charge, with simple, clear practices that keep humans doing the human jobs.</p></div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== QUOTE ===== -->
-  <section class="quote-band">
-    <div class="wrap reveal">
-      <blockquote>The real question is not whether machines think but whether men do.</blockquote>
-      <cite>B. F. Skinner</cite>
-    </div>
-  </section>
-
   <!-- ===== RECOMMENDATIONS =====
        Hidden until real quotes are in. To show it: remove the word "hidden" below
        and fill in each quote with the person's words, name, role and organization. -->
@@ -325,10 +247,13 @@
 
 <footer class="site-footer on-dark">
   <div class="wrap">
-    <h2>Let's talk data.</h2>
+    <figure class="footer-quote">
+      <blockquote>The real question is not whether machines think but whether men do.</blockquote>
+      <figcaption>B. F. Skinner</figcaption>
+    </figure>
     <div class="actions">
       <a class="btn lime" href="#book">Book a meeting <span class="arrow" aria-hidden="true">→</span></a>
-      <a class="btn light" href="mailto:markjmathany@gmail.com">markjmathany@gmail.com</a>
+      <button class="btn light" type="button" data-show-email>Reveal email</button>
     </div>
     <p class="footer-plea"><a href="help.html">I'm drowning, I can't pay you, please just help me <span aria-hidden="true">→</span></a></p>
     <div class="footer-bottom">
@@ -337,8 +262,6 @@
         <a href="#about">About</a>
         <a href="#work-with-me">Contact</a>
         <a href="#speaking">Speaking</a>
-        <a href="#services">Services</a>
-        <a href="#questions">Work</a>
       </nav>
     </div>
   </div>

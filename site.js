@@ -3,6 +3,19 @@
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.year').forEach(el => { el.textContent = new Date().getFullYear(); });
 
+  // ---------- Email address: never written out in the pages, so bots that collect addresses don't find it ----------
+  const EMAIL = ['markjmathany', 'gmail.com'].join('@');
+  document.querySelectorAll('[data-show-email]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = 'mailto:' + EMAIL;
+      link.textContent = EMAIL;
+      link.className = btn.className.replace('show-email', '').trim();
+      btn.replaceWith(link);
+      link.focus();
+    });
+  });
+
   // Header border once the page scrolls.
   const header = document.querySelector('.site-header');
   const onScroll = () => header.classList.toggle('scrolled', scrollY > 8);
@@ -106,7 +119,7 @@
   // ---------- Booking calendar ----------
   const BOOKING = {
     name: 'Mark Mathany',
-    email: 'markjmathany@gmail.com',
+    email: EMAIL,
     timeZone: 'Pacific/Honolulu',
     tzLabel: 'HST',
     slots: [[9, 0, 10, 0], [10, 30, 11, 30]], // start hour, start minute, end hour, end minute
@@ -268,7 +281,7 @@
   }
 
   // ---------- Message forms: send to a form service if one is set, otherwise open the visitor's email app ----------
-  document.querySelectorAll('form[data-email]').forEach(form => {
+  document.querySelectorAll('form[data-subject]').forEach(form => {
     const status = form.querySelector('.form-status');
     form.addEventListener('submit', async e => {
       e.preventDefault();
@@ -281,7 +294,7 @@
           form.reset();
           status.textContent = "Thanks! Your message is on its way. I'll be in touch within one business day.";
         } catch {
-          status.textContent = `Something went wrong. Please email me directly at ${form.dataset.email}.`;
+          status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
         }
         return;
       }
@@ -296,7 +309,7 @@
       }
       const body = lines.join('\n') + (message ? `\n\n${message}` : '');
       const subject = `${form.dataset.subject || 'New inquiry'} from ${data.get('name')}`;
-      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });
 })();

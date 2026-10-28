@@ -34,9 +34,8 @@
     <a class="logo" href="index.html" aria-label="Mark Mathany, home"><span class="logo-mark" aria-hidden="true"></span>Mark Mathany</a>
     <nav class="nav" aria-label="Main">
       <a href="index.html#about">About</a>
+      <a href="index.html#work-with-me">Contact</a>
       <a href="index.html#speaking">Speaking</a>
-      <a href="index.html#services">Services</a>
-      <a href="index.html#questions">Work</a>
       <a class="btn" href="#ask">Ask for help</a>
     </nav>
   </div>
@@ -145,7 +144,7 @@
         <p class="aside-link">Rather choose a time yourself? <a href="index.html?topic=Free%20help%20hour#book">Pick an open slot on my calendar</a>.</p>
       </div>
       <!-- To receive requests without opening an email app, create a free form at formspree.io and paste its URL into data-endpoint. -->
-      <form class="reveal" id="help-form" data-endpoint="" data-email="markjmathany@gmail.com" data-subject="Free help hour request">
+      <form class="reveal" id="help-form" data-endpoint="" data-subject="Free help hour request">
         <div class="row">
           <label class="field">Name<input name="name" required autocomplete="name"></label>
           <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
@@ -153,7 +152,7 @@
         <label class="field">Your business<input name="business" autocomplete="organization" placeholder="Optional"></label>
         <label class="field">What's going on?<textarea name="message" required placeholder="What's the biggest problem you're facing right now? What have you tried so far?"></textarea></label>
         <button class="btn" type="submit">Ask for my free hour <span class="arrow" aria-hidden="true">→</span></button>
-        <p class="form-note form-status" aria-live="polite">Prefer email? Write to <a href="mailto:markjmathany@gmail.com">markjmathany@gmail.com</a>.</p>
+        <p class="form-note form-status" aria-live="polite">Prefer email? <button class="show-email" type="button" data-show-email>Reveal my email address</button></p>
       </form>
     </div>
   </section>
@@ -164,7 +163,7 @@
     <h2>Let's figure it out.</h2>
     <div class="actions">
       <a class="btn lime" href="#ask">Ask for your free hour <span class="arrow" aria-hidden="true">→</span></a>
-      <a class="btn light" href="mailto:markjmathany@gmail.com">markjmathany@gmail.com</a>
+      <button class="btn light" type="button" data-show-email>Reveal email</button>
     </div>
     <div class="footer-bottom">
       <p>© <span class="year"></span> Mark Mathany · Kona, Hawaiʻi</p>
@@ -172,8 +171,6 @@
         <a href="index.html#about">About</a>
         <a href="index.html#work-with-me">Contact</a>
         <a href="index.html#speaking">Speaking</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#questions">Work</a>
       </nav>
     </div>
   </div>
