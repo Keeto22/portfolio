@@ -1,6 +1,6 @@
 # Mark Mathany: portfolio site
 
-A static website with no build step. It's hosted on Vercel as the project `markmathany`.
+A static website with no build step. It's hosted on Vercel as the project `markmathany` and lives at https://markmathany.com.
 
 ## Publishing changes
 
@@ -12,7 +12,7 @@ The Vercel project is connected to this GitHub repo, so every push to `main` goe
 - `help.html`: the free help hour page ("I'm drowning, I can't pay you, please just help me")
 - `styles.css`: all styles. The colors are at the top.
 - `site.js`: the sliding banner, custom cursor, booking calendar and forms
-- `images/`: photos, the pineapple drawing, the logo and the link preview image (`og.jpg`)
+- `images/`: photos, the pineapple drawing, the logo and the link preview image (`og.jpg`, used when the site is shared in a message or post)
 
 ## Common edits
 
