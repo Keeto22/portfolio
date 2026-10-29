@@ -222,23 +222,41 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .legend span { display: inline-flex; align-items: center; gap: 8px; }
 .legend i { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--lagoon); }
 .legend .k-booked { border-color: var(--line); background: repeating-linear-gradient(135deg, var(--cloud) 0 3px, var(--surface) 3px 6px); }
+/* Day buttons: only shown on phones and tablets, where one day's times show at a time */
+.day-tabs { display: none; }
+.day-tab { display: grid; justify-items: center; gap: 2px; padding: 9px 0; border: 1.5px solid var(--lagoon); border-radius: 14px; background: var(--surface); color: var(--ink); font: 700 18px/1.15 var(--body); }
+.day-tab span { font: 600 11px/1.2 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.day-tab.full { border-color: var(--line); background: repeating-linear-gradient(135deg, var(--cloud) 0 6px, var(--surface) 6px 12px); color: #7d929c; }
+.day-tab[aria-pressed="true"] { border-color: var(--lagoon); background: var(--lagoon); color: #fff; }
+.day-tab[aria-pressed="true"] span { color: rgba(255, 255, 255, .88); }
 .confirm { display: grid; gap: 20px; max-width: 680px; margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--line); }
 .confirm[hidden] { display: none; }
 .confirm-time { font: 700 clamp(20px, 2vw, 24px)/1.35 var(--body); }
+.confirm-time small { display: block; font: 500 15px/1.5 var(--body); color: var(--muted); }
 .booking-sent { display: grid; gap: 14px; justify-items: start; max-width: 680px; margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--line); }
 .booking-sent[hidden] { display: none; }
 .sent-title { font: 700 clamp(20px, 2vw, 24px)/1.35 var(--body); }
 .confirm, .booking-sent, .speaking-form { scroll-margin-top: 108px; }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
+  .booker-bar { gap: 8px; margin-bottom: 20px; }
+  .week-label { flex: 1; min-width: 0; font-size: 18px; }
+  .tz-note { margin-left: 0; width: 100%; font-size: 14px; text-align: center; }
+  .day-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
   .days { grid-template-columns: 1fr; gap: 0; }
-  .day { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-block: 16px; border-bottom: 1px solid var(--line); }
-  .day:first-child { padding-top: 0; }
-  .day h4 { grid-column: 1 / -1; margin: 0; }
-  .day h4 strong { display: inline; margin-left: 8px; font-size: 16px; }
+  .day { display: none; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .day.active { display: grid; }
+  .day h4 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .slot { margin: 0; padding: 12px 14px; font-size: 15px; }
-  .week-label { flex: 1; min-width: 0; }
-  .tz-note { margin-left: 0; width: 100%; }
+  .legend { display: none; }
 }
+@media (max-width: 600px) {
+  .booker { padding: 16px; }
+  .confirm-time { font-size: 18px; }
+  .confirm, .booking-sent { gap: 14px; margin-top: 20px; padding-top: 20px; }
+  .confirm .row { gap: 14px; }
+  .confirm textarea { min-height: 100px; }
+}
+@media (max-width: 340px) { .week-label { font-size: 16px; } }
 
 /* ---------- Forms ---------- */
 .field { display: grid; gap: 8px; font-size: 15px; font-weight: 600; }
@@ -248,6 +266,8 @@ input, select, textarea {
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--lagoon); box-shadow: 0 0 0 4px rgba(11, 110, 138, .14); }
 textarea { min-height: 130px; resize: vertical; }
+/* Slightly tighter fields on phones, keeping 17px text so iPhones don't zoom in */
+@media (max-width: 600px) { .field { gap: 6px; } input, select, textarea { padding: 12px 14px; } }
 .form-note { font-size: 14px; color: var(--muted); }
 .show-email { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
 [data-show-email] { cursor: pointer; }

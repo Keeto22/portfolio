@@ -181,6 +181,7 @@
     const WEEKDAY = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };
     const label = booker.querySelector('.week-label');
     const daysEl = booker.querySelector('.days');
+    const tabsEl = booker.querySelector('.day-tabs');
     const [prevBtn, nextBtn] = booker.querySelectorAll('.week-nav');
     const form = booker.querySelector('[data-booking-form]');
     const confirmTime = form.querySelector('.confirm-time');
@@ -229,6 +230,7 @@
 
     let week = slotsFor(0).some(day => day.slots.some(slot => slot.state === 'open')) ? 0 : 1;
     let selected = null;
+    let activeDay = 0;
 
     // A Google Calendar event with the chosen time, the visitor's answers and Mark as a guest.
     const calendarLink = () => {
@@ -249,8 +251,11 @@
       daysEl.querySelectorAll('[aria-pressed="true"]').forEach(b => b.setAttribute('aria-pressed', 'false'));
       btn.setAttribute('aria-pressed', 'true');
       selected = slot;
-      const local = sameAsHome(slot.s) ? '' : ` (${range(fmtLocal, slot.s, slot.e)} your time)`;
-      confirmTime.textContent = `${fmtLong.format(cal)}, ${range(fmtHome, slot.s, slot.e)} ${BOOKING.tzLabel}${local}`;
+      const hours = `${range(fmtHome, slot.s, slot.e)} ${BOOKING.tzLabel}`;
+      const local = sameAsHome(slot.s) ? '' : `(${range(fmtLocal, slot.s, slot.e)} your time)`;
+      // Line breaks fall between the date, the time and the visitor's own time, never inside them.
+      confirmTime.innerHTML = `<span class="nw">${fmtLong.format(cal)},</span> <span class="nw">${hours}</span>`
+        + (local ? ` <small class="nw">${local}</small>` : '');
       timeInput.value = confirmTime.textContent;
       sent.hidden = true;
       form.hidden = false;
@@ -280,12 +285,33 @@
       }
     });
 
+    // Phones and tablets show one day's times at a time, picked from a row of day buttons. Wider screens show the whole week.
+    const showDay = k => {
+      activeDay = k;
+      tabsEl.querySelectorAll('.day-tab').forEach((tab, i) => tab.setAttribute('aria-pressed', i === k ? 'true' : 'false'));
+      daysEl.querySelectorAll('.day').forEach((col, i) => col.classList.toggle('active', i === k));
+    };
+
     const render = () => {
       const days = slotsFor(week);
       label.textContent = `${fmtDate.format(days[0].cal)} – ${fmtDate.format(days[4].cal)}`;
       prevBtn.disabled = week === 0;
       nextBtn.disabled = week === BOOKING.weeksAhead - 1;
+      // Start on the day of the chosen time, or else the first day with an open time.
+      const hasOpen = day => day.slots.some(slot => slot.state === 'open');
+      const chosenDay = selected ? days.findIndex(day => day.slots.some(slot => slot.s.getTime() === selected.s.getTime())) : -1;
+      activeDay = chosenDay >= 0 ? chosenDay : Math.max(0, days.findIndex(hasOpen));
+      tabsEl.innerHTML = '';
       daysEl.innerHTML = '';
+      days.forEach((day, k) => {
+        const tab = document.createElement('button');
+        tab.type = 'button';
+        tab.className = hasOpen(day) ? 'day-tab' : 'day-tab full';
+        tab.innerHTML = `<span>${fmtDow.format(day.cal)}</span>${day.cal.getUTCDate()}`;
+        tab.setAttribute('aria-label', fmtLong.format(day.cal) + (hasOpen(day) ? '' : ', no open times'));
+        tab.addEventListener('click', () => showDay(k));
+        tabsEl.appendChild(tab);
+      });
       for (const day of days) {
         const col = document.createElement('div');
         col.className = 'day';
@@ -297,7 +323,7 @@
           btn.className = 'slot';
           const time = `<span class="time">${range(fmtHome, slot.s, slot.e)}</span>`;
           if (slot.state === 'open') {
-            const hint = sameAsHome(slot.s) ? 'Open' : `${range(fmtLocal, slot.s, slot.e)} your time`;
+            const hint = sameAsHome(slot.s) ? 'Open' : `<span class="nw">${range(fmtLocal, slot.s, slot.e)}</span> <span class="nw">your time</span>`;
             btn.innerHTML = `${time}<small>${hint}</small>`;
             const isSelected = selected && selected.s.getTime() === slot.s.getTime();
             btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
@@ -311,6 +337,7 @@
         }
         daysEl.appendChild(col);
       }
+      showDay(activeDay);
     };
 
     prevBtn.addEventListener('click', () => { week = Math.max(0, week - 1); render(); });
