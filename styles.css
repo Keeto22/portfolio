@@ -102,9 +102,9 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero-visual { margin: 0; }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
 .art-note { max-width: 21em; margin: 20px auto 0; font-size: 15px; line-height: 1.5; color: var(--muted); text-align: center; text-wrap: balance; }
-/* The circle is a small pie chart: one thin darker slice is pulled out from the rest. */
-.sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 49deg, transparent 0 13.5%, var(--lime) 0); transform: translate(-50%, -44%); }
-.sun::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 49deg, var(--lime-deep) 0 13.5%, transparent 0); transform: translate(2.63%, -0.79%); }
+/* The circle is a small pie chart: one darker slice is pulled out from the rest. */
+.sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 37deg, transparent 0 20.25%, var(--lime) 0); transform: translate(-50%, -44%); }
+.sun::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 37deg, var(--lime-deep) 0 20.25%, transparent 0); transform: translate(1.82%, -0.54%); }
 .pineapple {
   position: relative; height: 600px; aspect-ratio: 389 / 1000;
   background: linear-gradient(180deg, var(--lagoon) 0 40%, var(--ocean) 50% 100%);
