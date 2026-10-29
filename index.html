@@ -71,7 +71,7 @@
   </section>
 
   <!-- ===== SLIDING BANNER (drag it, or let it slide) ===== -->
-  <div class="marquee on-dark" data-marquee aria-label="Data analysis, data management, ethical AI, dashboards and reporting, speaking, training. Based in Kona, Hawaiʻi.">
+  <div class="marquee on-dark" data-marquee role="img" aria-label="Data analysis, data management, ethical AI, dashboards and reporting, speaking, training. Based in Kona, Hawaiʻi.">
     <div class="marquee-track">
       <div class="marquee-group" aria-hidden="true">
         <span>Data analysis</span><span class="star">✦</span>
@@ -128,7 +128,7 @@
         <div class="days" role="list"></div>
         <div class="legend" aria-hidden="true"><span><i></i>Open</span><span><i class="k-booked"></i>Booked</span></div>
         <form class="confirm" data-booking-form hidden>
-          <p class="confirm-time" aria-live="polite"></p>
+          <p class="confirm-time" tabindex="-1"></p>
           <input type="hidden" name="time" data-label="Requested time">
           <div class="row">
             <label class="field">Name<input name="name" required autocomplete="name"></label>

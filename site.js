@@ -48,6 +48,15 @@
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // A field the browser rejects (empty, or not an email) can end up under the sticky header: bring the first one into view.
+  document.addEventListener('invalid', e => {
+    const field = e.target;
+    const r = field.getBoundingClientRect();
+    if (field === field.form.querySelector(':invalid') && (r.top < header.getBoundingClientRect().bottom || r.bottom > innerHeight)) {
+      field.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+  }, true);
+
   // Fade sections in as they come into view.
   const io = new IntersectionObserver(entries => {
     for (const entry of entries) {
@@ -189,6 +198,7 @@
     const topicEl = form.querySelector('[name="topic"]');
     const submitBtn = form.querySelector('[type="submit"]');
     const status = form.querySelector('.form-status');
+    const statusNote = status.textContent;
     const sent = booker.querySelector('.booking-sent');
     const googleBtn = sent.querySelector('[data-book-google]');
 
@@ -201,7 +211,11 @@
       const a = fmt.format(s), b = fmt.format(e);
       return (a.slice(-2) === b.slice(-2) ? a.slice(0, -3) : a) + '–' + b;
     };
-    const sameAsHome = d => fmtLocal.format(d) === fmtHome.format(d);
+    // In Asia, Australia and New Zealand, Hawaiʻi mornings fall on the visitor's next day, so their weekday is shown too.
+    const fmtLocalDay = new Intl.DateTimeFormat('en-US', { weekday: 'short' });
+    const fmtHomeDay = new Intl.DateTimeFormat('en-US', { timeZone: BOOKING.timeZone, weekday: 'short' });
+    const localDay = d => fmtLocalDay.format(d) === fmtHomeDay.format(d) ? '' : fmtLocalDay.format(d) + ' ';
+    const sameAsHome = d => !localDay(d) && fmtLocal.format(d) === fmtHome.format(d);
 
     // Monday of the current week in Hawaiʻi (on weekends, the coming Monday).
     const weekStart = offset => {
@@ -228,7 +242,9 @@
       });
     };
 
-    let week = slotsFor(0).some(day => day.slots.some(slot => slot.state === 'open')) ? 0 : 1;
+    // When nothing is left this week, the four bookable weeks start next week.
+    const firstWeek = slotsFor(0).some(day => day.slots.some(slot => slot.state === 'open')) ? 0 : 1;
+    let week = firstWeek;
     let selected = null;
     let activeDay = 0;
 
@@ -251,24 +267,30 @@
       daysEl.querySelectorAll('[aria-pressed="true"]').forEach(b => b.setAttribute('aria-pressed', 'false'));
       btn.setAttribute('aria-pressed', 'true');
       selected = slot;
+      showDay([...daysEl.children].indexOf(btn.closest('.day')));
       const hours = `${range(fmtHome, slot.s, slot.e)} ${BOOKING.tzLabel}`;
-      const local = sameAsHome(slot.s) ? '' : `(${range(fmtLocal, slot.s, slot.e)} your time)`;
+      const local = sameAsHome(slot.s) ? '' : `(${localDay(slot.s)}${range(fmtLocal, slot.s, slot.e)} your time)`;
       // Line breaks fall between the date, the time and the visitor's own time, never inside them.
       confirmTime.innerHTML = `<span class="nw">${fmtLong.format(cal)},</span> <span class="nw">${hours}</span>`
         + (local ? ` <small class="nw">${local}</small>` : '');
       timeInput.value = confirmTime.textContent;
+      if (status.textContent !== statusNote) status.textContent = statusNote;
       sent.hidden = true;
       form.hidden = false;
       form.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      confirmTime.focus({ preventScroll: true });
     };
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      // Disabling the button while sending takes keyboard focus off it, so it gets focus back if the form is still open.
+      const hadFocus = document.activeElement === submitBtn;
       submitBtn.disabled = true;
       try {
+        if (status.textContent !== statusNote) status.textContent = statusNote;
         const how = await sendForm(form, `Meeting request: ${timeInput.value}, from ${new FormData(form).get('name')}`);
-        sent.querySelector('.sent-title').textContent = how === 'sent'
-          ? `Request sent for ${timeInput.value}.`
+        sent.querySelector('.sent-title').innerHTML = how === 'sent'
+          ? `Request sent for ${confirmTime.innerHTML}`
           : 'Almost done: press send in your email app.';
         sent.querySelector('.sent-note').textContent = how === 'sent'
           ? "I'll confirm by email within one business day. Want it on your calendar now?"
@@ -277,11 +299,13 @@
         googleBtn.textContent = BOOKING.bookingPageUrl ? 'Continue to booking' : 'Add it to Google Calendar';
         form.hidden = true;
         sent.hidden = false;
+        sent.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         sent.focus({ preventScroll: true });
       } catch {
         status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
       } finally {
         submitBtn.disabled = false;
+        if (hadFocus && !form.hidden) submitBtn.focus();
       }
     });
 
@@ -295,8 +319,8 @@
     const render = () => {
       const days = slotsFor(week);
       label.textContent = `${fmtDate.format(days[0].cal)} – ${fmtDate.format(days[4].cal)}`;
-      prevBtn.disabled = week === 0;
-      nextBtn.disabled = week === BOOKING.weeksAhead - 1;
+      prevBtn.disabled = week === firstWeek;
+      nextBtn.disabled = week === firstWeek + BOOKING.weeksAhead - 1;
       // Start on the day of the chosen time, or else the first day with an open time.
       const hasOpen = day => day.slots.some(slot => slot.state === 'open');
       const chosenDay = selected ? days.findIndex(day => day.slots.some(slot => slot.s.getTime() === selected.s.getTime())) : -1;
@@ -323,7 +347,7 @@
           btn.className = 'slot';
           const time = `<span class="time">${range(fmtHome, slot.s, slot.e)}</span>`;
           if (slot.state === 'open') {
-            const hint = sameAsHome(slot.s) ? 'Open' : `<span class="nw">${range(fmtLocal, slot.s, slot.e)}</span> <span class="nw">your time</span>`;
+            const hint = sameAsHome(slot.s) ? 'Open' : `${localDay(slot.s)}<span class="nw">${range(fmtLocal, slot.s, slot.e)}</span> <span class="nw">your time</span>`;
             btn.innerHTML = `${time}<small>${hint}</small>`;
             const isSelected = selected && selected.s.getTime() === slot.s.getTime();
             btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
@@ -340,8 +364,9 @@
       showDay(activeDay);
     };
 
-    prevBtn.addEventListener('click', () => { week = Math.max(0, week - 1); render(); });
-    nextBtn.addEventListener('click', () => { week = Math.min(BOOKING.weeksAhead - 1, week + 1); render(); });
+    // The arrow at either end of the range is disabled, which takes keyboard focus off it, so focus moves to the other arrow.
+    prevBtn.addEventListener('click', () => { const hadFocus = document.activeElement === prevBtn; week = Math.max(firstWeek, week - 1); render(); if (hadFocus && prevBtn.disabled) nextBtn.focus(); });
+    nextBtn.addEventListener('click', () => { const hadFocus = document.activeElement === nextBtn; week = Math.min(firstWeek + BOOKING.weeksAhead - 1, week + 1); render(); if (hadFocus && nextBtn.disabled) prevBtn.focus(); });
     document.querySelectorAll('[data-topic]').forEach(link => {
       link.addEventListener('click', () => { topicEl.value = link.dataset.topic; });
     });
