@@ -98,6 +98,8 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 
 /* ---------- Hero ---------- */
 .hero { padding-block: clamp(48px, 7vw, 112px) clamp(80px, 10vw, 140px); scroll-margin-top: 85px; }
+/* "Skip to content" leaves the first label below the sticky header, like the logo's #top link */
+#main { scroll-margin-top: 85px; }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .hero h1 { margin-bottom: 36px; }
 .hero .lede { margin-bottom: 44px; }
@@ -274,6 +276,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--l
 textarea { min-height: 130px; resize: vertical; }
 /* A field the browser scrolls to (when tabbing, or one left empty) stays clear of the sticky header */
 input, select, textarea { scroll-margin-top: 130px; }
+/* Links and buttons reached with Tab or Shift+Tab stay clear of it too */
+main a, main button, .site-footer a, .site-footer button { scroll-margin-top: 100px; }
 /* Slightly tighter fields on phones, keeping 17px text so iPhones don't zoom in */
 @media (max-width: 600px) { .field { gap: 6px; } input, select, textarea { padding: 12px 14px; } }
 .form-note { font-size: 14px; color: var(--muted); }

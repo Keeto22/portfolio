@@ -1,6 +1,10 @@
 (() => {
   const root = document.documentElement;
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Arriving from the other page (like index.html#book), jump to the section instead of gliding: the web fonts can land
+  // mid-glide and shorten the headings above, which leaves the section's label under the header. Glide again once they're in.
+  root.style.scrollBehavior = 'auto';
+  addEventListener('load', () => document.fonts.ready.then(() => { root.style.scrollBehavior = ''; }));
   document.querySelectorAll('.year').forEach(el => { el.textContent = new Date().getFullYear(); });
 
   // ---------- Email address: never written out in the pages, so bots that collect addresses don't find it ----------
@@ -306,6 +310,8 @@
       } finally {
         submitBtn.disabled = false;
         if (hadFocus && !form.hidden) submitBtn.focus();
+        // A failed send keeps the form open: its error line sits under the button, which can be at the bottom of the screen.
+        if (!form.hidden) status.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
       }
     });
 
