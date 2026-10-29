@@ -102,9 +102,8 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .hero-visual { margin: 0; }
 .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
 .art-note { max-width: 21em; margin: 20px auto 0; font-size: 15px; line-height: 1.5; color: var(--muted); text-align: center; text-wrap: balance; }
-/* The circle is a small pie chart: one darker slice is pulled out from the rest. */
-.sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 25deg, transparent 0 27%, var(--lime) 0); transform: translate(-50%, -44%); }
-.sun::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 25deg, var(--lime-deep) 0 27%, transparent 0); transform: translate(2.9%, -0.85%); }
+/* The circle is a small pie chart with three touching slices: a thin darker one, a white one and the rest in lime. */
+.sun { position: absolute; top: 50%; left: 50%; width: min(100%, 440px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 25deg, var(--lime-deep) 0 36deg, #fff 36.6deg 126deg, var(--lime) 126.6deg 359.4deg, var(--lime-deep) 360deg); transform: translate(-50%, -44%); }
 .pineapple {
   position: relative; height: 600px; aspect-ratio: 389 / 1000;
   background: linear-gradient(180deg, var(--lagoon) 0 40%, var(--ocean) 50% 100%);
