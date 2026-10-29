@@ -394,17 +394,24 @@
     const submitBtn = form.querySelector('[type="submit"]');
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      // Disabling the button while sending takes keyboard focus off it, so it gets focus back afterwards.
+      const hadFocus = document.activeElement === submitBtn;
       submitBtn.disabled = true;
       try {
         const how = await sendForm(form, `${form.dataset.subject} from ${new FormData(form).get('name')}`);
         if (how === 'sent') {
           form.reset();
           status.textContent = form.dataset.thanks || "Thanks! Your message is on its way. I'll be in touch within one business day.";
+        } else {
+          status.textContent = `Almost done: press send in your email app. If it didn't open, email me at ${EMAIL}.`;
         }
       } catch {
         status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
       } finally {
         submitBtn.disabled = false;
+        if (hadFocus) submitBtn.focus();
+        // The result line sits under the button, which can be at the very bottom of the screen.
+        status.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
       }
     });
   });
