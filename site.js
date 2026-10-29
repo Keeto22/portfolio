@@ -16,6 +16,32 @@
     });
   });
 
+  // ---------- Where form messages go ----------
+  // Every form is sent to this Formspree form, which emails it to Mark. To change where messages go, paste another
+  // Formspree link here. If it's left empty, sending a form opens the visitor's email app with everything filled in.
+  const FORM_ENDPOINT = 'https://formspree.io/f/xbggynvl';
+  const sendForm = async (form, subject) => {
+    if (FORM_ENDPOINT) {
+      const data = new FormData(form);
+      data.append('_subject', subject);
+      const res = await fetch(FORM_ENDPOINT, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(res.statusText);
+      return 'sent';
+    }
+    // Each field's label becomes a line in the email, with the long message last.
+    const lines = [];
+    let message = '';
+    for (const field of form.querySelectorAll('input, select, textarea')) {
+      if (!field.name || !field.value.trim()) continue;
+      if (field.tagName === 'TEXTAREA') { message = field.value.trim(); continue; }
+      const label = field.dataset.label || field.closest('label').firstChild.textContent.trim();
+      lines.push(`${label}: ${field.value.trim()}`);
+    }
+    const body = lines.join('\n') + (message ? `\n\n${message}` : '');
+    location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return 'email-app';
+  };
+
   // Header border once the page scrolls.
   const header = document.querySelector('.site-header');
   const onScroll = () => header.classList.toggle('scrolled', scrollY > 8);
@@ -126,7 +152,8 @@
     openDays: [1, 2, 4],  // Monday, Tuesday and Thursday can be booked. Other weekdays show as booked.
     weeksAhead: 4,
     minNoticeHours: 12,
-    // Optional: paste a Google Calendar appointment schedule link here to send visitors there instead.
+    // Optional: a Google Calendar appointment schedule link. After sending a request, visitors get this link
+    // instead of a Google Calendar event filled in with their time.
     bookingPageUrl: ''
   };
 
@@ -155,12 +182,14 @@
     const label = booker.querySelector('.week-label');
     const daysEl = booker.querySelector('.days');
     const [prevBtn, nextBtn] = booker.querySelectorAll('.week-nav');
-    const confirmEl = booker.querySelector('.confirm');
-    const confirmTime = booker.querySelector('.confirm-time');
-    const topicEl = booker.querySelector('[name="topic"]');
-    const noteEl = booker.querySelector('[name="note"]');
-    const googleBtn = booker.querySelector('[data-book-google]');
-    const emailBtn = booker.querySelector('[data-book-email]');
+    const form = booker.querySelector('[data-booking-form]');
+    const confirmTime = form.querySelector('.confirm-time');
+    const timeInput = form.querySelector('[name="time"]');
+    const topicEl = form.querySelector('[name="topic"]');
+    const submitBtn = form.querySelector('[type="submit"]');
+    const status = form.querySelector('.form-status');
+    const sent = booker.querySelector('.booking-sent');
+    const googleBtn = sent.querySelector('[data-book-google]');
 
     const fmtDow = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', weekday: 'short' });
     const fmtDate = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
@@ -201,38 +230,55 @@
     let week = slotsFor(0).some(day => day.slots.some(slot => slot.state === 'open')) ? 0 : 1;
     let selected = null;
 
-    const updateLinks = () => {
-      if (!selected) return;
-      const topic = topicEl.value;
-      const note = noteEl.value.trim();
-      const when = confirmTime.textContent;
-      if (BOOKING.bookingPageUrl) {
-        googleBtn.href = BOOKING.bookingPageUrl;
-        googleBtn.firstChild.textContent = 'Continue to booking ';
-        emailBtn.hidden = true;
-        return;
-      }
+    // A Google Calendar event with the chosen time, the visitor's answers and Mark as a guest.
+    const calendarLink = () => {
+      if (BOOKING.bookingPageUrl) return BOOKING.bookingPageUrl;
+      const data = new FormData(form);
       const stamp = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-      const details = `${topic}${note ? '\n\n' + note : ''}\n\nBooked from ${location.host || 'Mark Mathany’s website'}`;
-      googleBtn.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-        + '&text=' + encodeURIComponent(`Meeting with ${BOOKING.name}: ${topic}`)
+      const who = [data.get('name'), data.get('organization'), data.get('email')].filter(Boolean).join(', ');
+      const details = `${data.get('topic')}\n\n${data.get('message')}\n\n${who}\nBooked from ${location.host || 'Mark Mathany’s website'}`;
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        + '&text=' + encodeURIComponent(`Meeting with ${BOOKING.name}: ${data.get('topic')}`)
         + '&dates=' + stamp(selected.s) + '/' + stamp(selected.e)
         + '&details=' + encodeURIComponent(details)
         + '&add=' + encodeURIComponent(BOOKING.email);
-      const body = `Hi Mark,\n\nI'd like to book a meeting: ${when}\nTopic: ${topic}\n${note ? '\n' + note + '\n' : ''}\nThanks!`;
-      emailBtn.href = `mailto:${BOOKING.email}?subject=${encodeURIComponent('Meeting request: ' + when)}&body=${encodeURIComponent(body)}`;
     };
 
+    // Picking a time opens a short form with the same questions as the contact form.
     const choose = (btn, slot, cal) => {
       daysEl.querySelectorAll('[aria-pressed="true"]').forEach(b => b.setAttribute('aria-pressed', 'false'));
       btn.setAttribute('aria-pressed', 'true');
       selected = slot;
       const local = sameAsHome(slot.s) ? '' : ` (${range(fmtLocal, slot.s, slot.e)} your time)`;
       confirmTime.textContent = `${fmtLong.format(cal)}, ${range(fmtHome, slot.s, slot.e)} ${BOOKING.tzLabel}${local}`;
-      confirmEl.hidden = false;
-      updateLinks();
-      confirmEl.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+      timeInput.value = confirmTime.textContent;
+      sent.hidden = true;
+      form.hidden = false;
+      form.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     };
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      try {
+        const how = await sendForm(form, `Meeting request: ${timeInput.value}, from ${new FormData(form).get('name')}`);
+        sent.querySelector('.sent-title').textContent = how === 'sent'
+          ? `Request sent for ${timeInput.value}.`
+          : 'Almost done: press send in your email app.';
+        sent.querySelector('.sent-note').textContent = how === 'sent'
+          ? "I'll confirm by email within one business day. Want it on your calendar now?"
+          : `It should have opened with your request for ${timeInput.value}. I'll confirm by email within one business day.`;
+        googleBtn.href = calendarLink();
+        googleBtn.textContent = BOOKING.bookingPageUrl ? 'Continue to booking' : 'Add it to Google Calendar';
+        form.hidden = true;
+        sent.hidden = false;
+        sent.focus({ preventScroll: true });
+      } catch {
+        status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
 
     const render = () => {
       const days = slotsFor(week);
@@ -269,10 +315,8 @@
 
     prevBtn.addEventListener('click', () => { week = Math.max(0, week - 1); render(); });
     nextBtn.addEventListener('click', () => { week = Math.min(BOOKING.weeksAhead - 1, week + 1); render(); });
-    topicEl.addEventListener('change', updateLinks);
-    noteEl.addEventListener('input', updateLinks);
     document.querySelectorAll('[data-topic]').forEach(link => {
-      link.addEventListener('click', () => { topicEl.value = link.dataset.topic; updateLinks(); });
+      link.addEventListener('click', () => { topicEl.value = link.dataset.topic; });
     });
     // A link like index.html?topic=Free%20help%20hour#book picks the topic in advance.
     const askedTopic = new URLSearchParams(location.search).get('topic');
@@ -280,36 +324,36 @@
     render();
   }
 
-  // ---------- Message forms: send to a form service if one is set, otherwise open the visitor's email app ----------
+  // ---------- Speaking request form: hidden until its button is pressed ----------
+  document.querySelectorAll('[data-open-form]').forEach(link => {
+    const form = document.getElementById(link.getAttribute('aria-controls'));
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      form.classList.add('open');
+      link.setAttribute('aria-expanded', 'true');
+      form.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      form.querySelector('h3').focus({ preventScroll: true });
+    });
+  });
+
+  // ---------- Message forms (contact, speaking, free help) ----------
   document.querySelectorAll('form[data-subject]').forEach(form => {
     const status = form.querySelector('.form-status');
+    const submitBtn = form.querySelector('[type="submit"]');
     form.addEventListener('submit', async e => {
       e.preventDefault();
-      const data = new FormData(form);
-      const endpoint = form.dataset.endpoint;
-      if (endpoint) {
-        try {
-          const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-          if (!res.ok) throw new Error(res.statusText);
+      submitBtn.disabled = true;
+      try {
+        const how = await sendForm(form, `${form.dataset.subject} from ${new FormData(form).get('name')}`);
+        if (how === 'sent') {
           form.reset();
-          status.textContent = "Thanks! Your message is on its way. I'll be in touch within one business day.";
-        } catch {
-          status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
+          status.textContent = form.dataset.thanks || "Thanks! Your message is on its way. I'll be in touch within one business day.";
         }
-        return;
+      } catch {
+        status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
+      } finally {
+        submitBtn.disabled = false;
       }
-      // Each field's label becomes a line in the email, with the long message last.
-      const lines = [];
-      let message = '';
-      for (const field of form.querySelectorAll('input, select, textarea')) {
-        if (!field.name || !field.value.trim()) continue;
-        if (field.tagName === 'TEXTAREA') { message = field.value.trim(); continue; }
-        const label = field.closest('label').firstChild.textContent.trim();
-        lines.push(`${label}: ${field.value.trim()}`);
-      }
-      const body = lines.join('\n') + (message ? `\n\n${message}` : '');
-      const subject = `${form.dataset.subject || 'New inquiry'} from ${data.get('name')}`;
-      location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });
 })();

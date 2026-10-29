@@ -16,8 +16,8 @@ The Vercel project is connected to this GitHub repo, so every push to `main` goe
 
 ## Common edits
 
-- **Booking times and days:** change `BOOKING` near the middle of `site.js` (`slots`, `openDays`, `weeksAhead`). To send visitors to a Google Calendar appointment schedule instead, paste its link into `bookingPageUrl`.
-- **Forms:** submitting a form opens the visitor's email app with the message filled in. To get messages straight to your inbox instead, create a free form at formspree.io and paste its URL into `data-endpoint` on the form in `index.html` and in `help.html`.
+- **Booking times and days:** change `BOOKING` near the middle of `site.js` (`slots`, `openDays`, `weeksAhead`). Picking a time opens a short form, and sending it emails you the request. To have visitors finish on a Google Calendar appointment schedule after they send it, paste the schedule's link into `bookingPageUrl`.
+- **Forms:** the booking, contact, speaking and free help forms all send through `FORM_ENDPOINT` near the top of `site.js`, which is Mark's Formspree form (submissions arrive by email and in the Formspree dashboard). To send them somewhere else, paste another Formspree link there. If it's left empty, sending a form opens the visitor's email app with the message filled in.
 - **Recommendations:** in `index.html`, remove `hidden` from the recommendations section and fill in each quote with the person's words, name, role and organization.
 - **Certificates:** in the About section of `index.html`.
 - **Email address:** set once near the top of `site.js` (`EMAIL`), in two parts so bots that collect addresses from websites don't find it. Visitors see it after clicking "Reveal email".

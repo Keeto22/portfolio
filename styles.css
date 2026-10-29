@@ -25,6 +25,7 @@ a { color: inherit; }
 p, figure { margin: 0; }
 ::selection { background: var(--lime); color: var(--ink); }
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+[tabindex="-1"]:focus { outline: none; }
 .wrap { width: min(1240px, 100% - 48px); margin-inline: auto; }
 @media (max-width: 600px) { .wrap { width: calc(100% - 40px); } }
 .skip { position: absolute; left: -9999px; }
@@ -155,6 +156,12 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .speaking li { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .speaking li::before { content: "✦"; color: var(--lagoon); }
 @media (max-width: 900px) { .speaking .wrap { grid-template-columns: 1fr; } }
+/* Speaking request form: opens under the section from the button */
+.speaking-form { grid-column: 1 / -1; display: grid; gap: 20px; padding: clamp(24px, 3vw, 44px); border: 1px solid var(--line); border-radius: 28px; background: var(--surface); }
+.js .speaking-form:not(.open) { display: none; }
+.speaking-form .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 1100px) { .speaking-form .fields { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .speaking-form .fields { grid-template-columns: 1fr; } }
 
 /* ---------- Kona ---------- */
 .place { position: relative; display: grid; align-items: end; min-height: clamp(560px, 78vh, 820px); padding: 0; overflow: hidden; color: #fff; }
@@ -179,6 +186,8 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .credentials li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); font-size: 16px; }
 .credentials li span { color: var(--muted); white-space: nowrap; }
 @media (max-width: 900px) { .about .wrap { grid-template-columns: 1fr; } .about img { max-width: 380px; } }
+/* Phones skip the certificate list to keep About short */
+@media (max-width: 600px) { .credentials { display: none; } }
 
 /* ---------- Recommendations (shown once real quotes are added) ---------- */
 .quotes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: clamp(48px, 6vw, 80px); }
@@ -216,7 +225,10 @@ section { padding-block: clamp(96px, 12vw, 176px); }
 .confirm { display: grid; gap: 20px; max-width: 680px; margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--line); }
 .confirm[hidden] { display: none; }
 .confirm-time { font: 700 clamp(20px, 2vw, 24px)/1.35 var(--body); }
-.confirm .actions { margin-top: 4px; }
+.booking-sent { display: grid; gap: 14px; justify-items: start; max-width: 680px; margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--line); }
+.booking-sent[hidden] { display: none; }
+.sent-title { font: 700 clamp(20px, 2vw, 24px)/1.35 var(--body); }
+.confirm, .booking-sent, .speaking-form { scroll-margin-top: 108px; }
 @media (max-width: 760px) {
   .days { grid-template-columns: 1fr; gap: 0; }
   .day { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-block: 16px; border-bottom: 1px solid var(--line); }
@@ -224,6 +236,7 @@ section { padding-block: clamp(96px, 12vw, 176px); }
   .day h4 { grid-column: 1 / -1; margin: 0; }
   .day h4 strong { display: inline; margin-left: 8px; font-size: 16px; }
   .slot { margin: 0; padding: 12px 14px; font-size: 15px; }
+  .week-label { flex: 1; min-width: 0; }
   .tz-note { margin-left: 0; width: 100%; }
 }
 
@@ -247,7 +260,7 @@ textarea { min-height: 130px; resize: vertical; }
 .steps strong { display: block; color: var(--ink); }
 .inquiry form { display: grid; gap: 20px; padding: clamp(24px, 3vw, 44px); border: 1px solid var(--line); border-radius: 28px; background: var(--surface); }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.inquiry form .btn { justify-self: start; cursor: pointer; }
+form .btn { justify-self: start; cursor: pointer; }
 .inquiry .aside-link { margin-top: 28px; font-size: 16px; color: var(--muted); }
 .inquiry .aside-link a { color: var(--lagoon); font-weight: 600; text-underline-offset: 4px; }
 @media (max-width: 900px) { .inquiry .wrap, .row { grid-template-columns: 1fr; } }
@@ -262,7 +275,7 @@ textarea { min-height: 130px; resize: vertical; }
 
 /* ---------- Free help page ---------- */
 .lifebuoy-art { position: relative; display: grid; place-items: center; min-height: 560px; }
-.water { position: absolute; top: 50%; left: 50%; width: min(100%, 480px); aspect-ratio: 1; border-radius: 50%; background: var(--ocean); transform: translate(-50%, -50%); }
+.water { position: absolute; top: 50%; left: 50%; width: min(100%, 480px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--ocean); transform: translate(-50%, -50%); }
 .water svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 40s linear infinite; }
 .water text { font: 600 8.5px var(--body); letter-spacing: .18em; fill: var(--lime); }
 .lifebuoy {

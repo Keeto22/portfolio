@@ -92,9 +92,9 @@
       <div class="reveal">
         <p class="eyebrow">About</p>
         <h2>Hi, I'm Mark</h2>
+        <p class="mission">I'm here to be your human layer for <span class="nw">non-human</span> intelligence, to help train you and your employees on which tools are available to you and how to use them.</p>
         <p>I'm a data analyst based in Kona, Hawaiʻi. I love the hard questions: the ones where the data is messy, the stakes are real, and nobody is quite sure where to start.</p>
         <p>I work closely with the people who will use the answers, so the findings are clear, trusted and actually put to work. I also speak and lead trainings, most recently at the Kona Coast Leadership Summit.</p>
-        <p class="mission">I'm here to be your human layer for <span class="nw">non-human</span> intelligence, to help train you and your employees on which tools are available to you and how to use them.</p>
         <div class="credentials">
           <h3>Data analytics certifications</h3>
           <p class="note">Issued by Google through Coursera</p>
@@ -115,7 +115,7 @@
       <div class="section-head reveal">
         <p class="eyebrow">Book a meeting</p>
         <h2>Pick a time</h2>
-        <p class="lede">Meetings are one hour, in the morning Hawaiʻi time. Choose an open slot, add a note, and send me the invite. I'll confirm by email.</p>
+        <p class="lede">Meetings are one hour, in the morning Hawaiʻi time. Choose an open slot, tell me a little about what you need, and send the request. I'll confirm by email.</p>
       </div>
       <div class="booker reveal" data-booker>
         <div class="booker-bar">
@@ -126,27 +126,35 @@
         </div>
         <div class="days" role="list"></div>
         <div class="legend" aria-hidden="true"><span><i></i>Open</span><span><i class="k-booked"></i>Booked</span></div>
-        <div class="confirm" hidden>
+        <form class="confirm" data-booking-form hidden>
           <p class="confirm-time" aria-live="polite"></p>
-          <label class="field">What would you like to talk about?
-            <select name="topic">
-              <option>Help with my data</option>
-              <option>Ongoing data management</option>
-              <option>Ethical AI practices</option>
-              <option>Speaking engagement</option>
-              <option>Team training</option>
-              <option>Free help hour</option>
-              <option>Something else</option>
-            </select>
-          </label>
-          <label class="field">Anything I should know beforehand? (optional)
-            <textarea name="note" rows="3"></textarea>
-          </label>
-          <div class="actions">
-            <a class="btn" data-book-google target="_blank" rel="noopener">Book with Google Calendar <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="btn ghost" data-book-email>Request by email</a>
+          <input type="hidden" name="time" data-label="Requested time">
+          <div class="row">
+            <label class="field">Name<input name="name" required autocomplete="name"></label>
+            <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
           </div>
-          <p class="form-note">Google Calendar opens with the time filled in and me added as a guest. Save the event to send me the invite.</p>
+          <div class="row">
+            <label class="field">Organization<input name="organization" autocomplete="organization"></label>
+            <label class="field">What would you like to talk about?
+              <select name="topic">
+                <option>Help with my data</option>
+                <option>Ongoing data management</option>
+                <option>Ethical AI practices</option>
+                <option>Speaking engagement</option>
+                <option>Team training</option>
+                <option>Free help hour</option>
+                <option>Something else</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">What's going on with your data?<textarea name="message" required placeholder="What questions are you trying to answer? Where does your data live today?"></textarea></label>
+          <button class="btn" type="submit">Request this time <span class="arrow" aria-hidden="true">→</span></button>
+          <p class="form-note form-status" aria-live="polite">I'll confirm by email within one business day.</p>
+        </form>
+        <div class="booking-sent" tabindex="-1" hidden>
+          <p class="sent-title"></p>
+          <p class="sent-note"></p>
+          <a class="btn ghost" data-book-google target="_blank" rel="noopener">Add it to Google Calendar</a>
         </div>
       </div>
     </div>
@@ -166,8 +174,7 @@
         </ol>
       </div>
       <div class="inquiry-side">
-        <!-- To receive messages without opening an email app, create a free form at formspree.io and paste its URL into data-endpoint. -->
-        <form class="reveal" id="inquiry-form" data-endpoint="" data-subject="New inquiry">
+        <form class="reveal" id="inquiry-form" data-subject="New inquiry">
           <div class="row">
             <label class="field">Name<input name="name" required autocomplete="name"></label>
             <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
@@ -215,8 +222,42 @@
           <li>Hands-on training on your own data and tools</li>
           <li>Ethical AI: keeping humans in the human jobs</li>
         </ul>
-        <a class="btn" href="#book" data-topic="Speaking engagement">Book a speaking engagement or training <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn" href="#speaking-form" data-open-form aria-controls="speaking-form" aria-expanded="false">Book a speaking engagement or training <span class="arrow" aria-hidden="true">→</span></a>
       </div>
+      <form class="speaking-form" id="speaking-form" data-subject="Speaking request" data-thanks="Thanks! Your speaking request is on its way. I'll reply within one business day.">
+        <h3 tabindex="-1">Tell me about your event</h3>
+        <div class="fields">
+          <label class="field">Name<input name="name" required autocomplete="name"></label>
+          <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
+          <label class="field">Organization<input name="organization" autocomplete="organization"></label>
+          <label class="field">Event name<input name="event"></label>
+          <label class="field">Event date(s)<input name="dates" required placeholder="For example, March 12, 2027"></label>
+          <label class="field">Location<input name="location" placeholder="City and venue, or virtual"></label>
+          <label class="field">Audience size
+            <select name="audience" required>
+              <option value="">Choose one</option>
+              <option>Under 25</option>
+              <option>25 to 100</option>
+              <option>100 to 300</option>
+              <option>300 to 1,000</option>
+              <option>More than 1,000</option>
+            </select>
+          </label>
+          <label class="field">Type of session
+            <select name="format">
+              <option>Keynote</option>
+              <option>Breakout session</option>
+              <option>Workshop</option>
+              <option>Team training</option>
+              <option>Panel</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+        </div>
+        <label class="field">What would you like me to cover?<textarea name="message" required placeholder="The topic, who will be in the room and what you hope they take away. Include a budget if you have one."></textarea></label>
+        <button class="btn" type="submit">Send speaking request <span class="arrow" aria-hidden="true">→</span></button>
+        <p class="form-note form-status" aria-live="polite">Prefer email? <button class="show-email" type="button" data-show-email>Reveal my email address</button></p>
+      </form>
     </div>
   </section>
 
