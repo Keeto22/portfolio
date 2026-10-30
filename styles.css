@@ -284,6 +284,40 @@ main a, main button, .site-footer a, .site-footer button { scroll-margin-top: 10
 .show-email { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
 [data-show-email] { cursor: pointer; }
 
+/* ---------- Pop-up after pressing send ---------- */
+.popup {
+  width: min(440px, 100% - 40px); padding: 0; border: 0; border-radius: 28px;
+  background: var(--surface); color: var(--ink); box-shadow: 0 30px 80px -20px rgba(1, 50, 74, .5);
+  animation: pop-in .35s cubic-bezier(.2, .8, .2, 1);
+}
+.popup::backdrop { background: rgba(1, 50, 74, .6); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: fade-in .25s ease; }
+.popup-card { display: grid; justify-items: center; gap: 12px; padding: clamp(32px, 7vw, 48px) clamp(22px, 6vw, 40px) clamp(28px, 6vw, 40px); text-align: center; }
+.popup [hidden] { display: none; }
+.popup-icon { display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 10px; border-radius: 50%; background: var(--lime); color: var(--ocean-deep); font: 800 40px/1 var(--display); }
+/* Sending: a turning ring. Sent: a check mark that pops in. */
+.popup[data-state="sending"] .popup-icon { background: none; border: 6px solid var(--cloud); border-top-color: var(--lagoon); animation: spin .8s linear infinite; }
+.popup[data-state="sent"] .popup-icon { animation: check-in .45s cubic-bezier(.3, 1.5, .5, 1); }
+.popup[data-state="sent"] .popup-icon::after { content: ""; width: 32px; height: 17px; margin-top: -8px; border: solid currentColor; border-width: 0 0 6px 6px; transform: rotate(-45deg); }
+.popup[data-state="error"] .popup-icon { background: var(--cloud); color: var(--ocean); }
+.popup[data-state="error"] .popup-icon::after { content: "!"; }
+.popup[data-state="email-app"] .popup-icon::after { content: "→"; font: 600 34px/1 var(--body); }
+.popup-title { font-size: clamp(36px, 9vw, 46px); }
+.popup-time { font: 700 18px/1.4 var(--body); text-wrap: balance; }
+.popup-time small { display: block; font: 500 15px/1.5 var(--body); color: var(--muted); }
+.popup-text { max-width: 26em; font-size: 17px; line-height: 1.6; color: var(--muted); text-wrap: pretty; overflow-wrap: anywhere; }
+.popup-text a { color: var(--lagoon); font-weight: 600; text-underline-offset: 3px; }
+.popup .btn { margin-top: 16px; cursor: pointer; }
+/* Phones turned sideways: a smaller card that fits without scrolling */
+@media (max-height: 500px) {
+  .popup-card { gap: 8px; padding-block: 24px; }
+  .popup-icon { width: 56px; height: 56px; margin-bottom: 4px; }
+  .popup-title { font-size: 32px; }
+  .popup .btn { margin-top: 6px; }
+}
+@keyframes pop-in { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+@keyframes check-in { from { opacity: 0; transform: scale(.5); } }
+@keyframes fade-in { from { opacity: 0; } }
+
 /* ---------- Work with me ---------- */
 .inquiry .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
 .steps { list-style: none; margin: 44px 0 0; padding: 0; counter-reset: step; }
@@ -378,7 +412,7 @@ form .btn, [data-open-form], .booking-sent .btn { line-height: 1.2; }
   position: absolute; transform: translate(-50%, -50%); white-space: nowrap; opacity: 0; transition: opacity .2s;
   font: 700 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ocean-deep);
 }
-html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor:not(.popup-open), html.has-cursor:not(.popup-open) * { cursor: none !important; }
 html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .cursor-visible .cursor-dot, .cursor-visible .cursor-ring { opacity: 1; }
 .cursor-link .cursor-ring i { transform: scale(1.5); border-color: var(--lagoon); background: rgba(76, 199, 230, .16); }
@@ -389,8 +423,11 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .cursor-dark .cursor-dot { background: var(--lime); }
 .cursor-dark:not(.cursor-drag) .cursor-ring i { border-color: var(--lime); }
 .cursor-text .cursor-dot, .cursor-text .cursor-ring { opacity: 0 !important; }
+/* The pop-up sits above everything, the drawn cursor too, so the usual pointer is back while it's open */
+.popup-open .cursor-dot, .popup-open .cursor-ring { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  .popup::backdrop { animation: none; }
 }

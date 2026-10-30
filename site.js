@@ -28,8 +28,15 @@
     if (FORM_ENDPOINT) {
       const data = new FormData(form);
       data.append('_subject', subject);
-      const res = await fetch(FORM_ENDPOINT, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error(res.statusText);
+      // Give up after 20 seconds, so a stalled connection ends in "Not sent" instead of a pop-up that keeps saying "Sending".
+      const stop = new AbortController();
+      const timer = setTimeout(() => stop.abort(), 20000);
+      try {
+        const res = await fetch(FORM_ENDPOINT, { method: 'POST', body: data, headers: { Accept: 'application/json' }, signal: stop.signal });
+        if (!res.ok) throw new Error(res.statusText);
+      } finally {
+        clearTimeout(timer);
+      }
       return 'sent';
     }
     // Each field's label becomes a line in the email, with the long message last.
@@ -45,6 +52,68 @@
     location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     return 'email-app';
   };
+
+  // "jack smith" becomes "Jack", for the "Thanks, Jack!" after sending.
+  const firstName = form => {
+    const first = String(new FormData(form).get('name') || '').trim().split(/\s+/)[0];
+    return first.charAt(0).toUpperCase() + first.slice(1);
+  };
+  const thanks = name => (name ? `Thanks, ${name}!` : 'Thanks!');
+
+  // ---------- Pop-up after pressing send ----------
+  // It opens the moment a form is sent, then says whether it went through as soon as the answer comes back. The line under
+  // each form says the same, for browsers without pop-ups and for anyone who closes it before the answer comes.
+  const popup = (() => {
+    if (!window.HTMLDialogElement || !HTMLDialogElement.prototype.showModal) return { show: () => false, isOpen: () => false };
+    const dialog = document.createElement('dialog');
+    dialog.className = 'popup';
+    dialog.tabIndex = -1;
+    dialog.setAttribute('aria-labelledby', 'popup-title');
+    dialog.innerHTML = '<div class="popup-card"><span class="popup-icon" aria-hidden="true"></span><h2 class="popup-title" id="popup-title"></h2>'
+      + '<p class="popup-time" id="popup-time"></p><p class="popup-text" id="popup-text"></p>'
+      + '<button class="btn popup-close" type="button" aria-describedby="popup-time popup-text"></button></div>';
+    document.body.append(dialog);
+    const [title, time, text] = ['title', 'time', 'text'].map(part => dialog.querySelector('.popup-' + part));
+    const closeBtn = dialog.querySelector('.popup-close');
+    let returnTo = null, pressedOutside = false;
+    closeBtn.addEventListener('click', () => dialog.close());
+    // Tapping the dimmed page around the card closes it too.
+    dialog.addEventListener('pointerdown', e => { pressedOutside = e.target === dialog; });
+    dialog.addEventListener('click', e => { if (pressedOutside && e.target === dialog) dialog.close(); });
+    dialog.addEventListener('close', () => {
+      root.classList.remove('popup-open');
+      if (returnTo) returnTo.focus({ preventScroll: true });
+    });
+    const emailLink = () => Object.assign(document.createElement('a'), { href: 'mailto:' + EMAIL, textContent: EMAIL });
+    const TEXTS = {
+      sending: ['Sending…', () => ['Just a moment.']],
+      sent: ['Sent', () => ["Thanks! It's on its way."]],
+      'email-app': ['Almost done', () => ["Press send in your email app to finish. If it didn't open, email me at ", emailLink(), '.']],
+      error: ['Not sent', () => ["Something went wrong, so it didn't go through. Please try again, or email me at ", emailLink(), '.']]
+    };
+    // state is 'sending', 'sent', 'email-app' or 'error'; when is the requested meeting time; back is what gets focus after.
+    // Returns false if the pop-up was closed while sending: the result then shows only under the form.
+    const show = (state, { heading, message, when = '', back } = {}) => {
+      if (state !== 'sending' && !dialog.open) return false;
+      dialog.dataset.state = state;
+      title.textContent = heading || TEXTS[state][0];
+      time.innerHTML = when;
+      time.hidden = !when;
+      text.replaceChildren(...(message || TEXTS[state][1]()));
+      closeBtn.textContent = state === 'sent' ? 'Done' : 'Close';
+      closeBtn.hidden = state === 'sending';
+      if (back || state === 'sending') returnTo = back || null;
+      if (!dialog.open) {
+        // Focus leaves the field first, so a phone's keyboard doesn't pop back up when the pop-up closes.
+        if (document.activeElement) document.activeElement.blur();
+        root.classList.add('popup-open');
+        dialog.showModal();
+      }
+      (state === 'sending' ? dialog : closeBtn).focus();
+      return true;
+    };
+    return { show, isOpen: () => dialog.open };
+  })();
 
   // Header border once the page scrolls.
   const header = document.querySelector('.site-header');
@@ -289,6 +358,8 @@
       e.preventDefault();
       // Disabling the button while sending takes keyboard focus off it, so it gets focus back if the form is still open.
       const hadFocus = document.activeElement === submitBtn;
+      const name = firstName(form);
+      popup.show('sending', { when: confirmTime.innerHTML, back: submitBtn });
       submitBtn.disabled = true;
       try {
         if (status.textContent !== statusNote) status.textContent = statusNote;
@@ -304,12 +375,16 @@
         form.hidden = true;
         sent.hidden = false;
         sent.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-        sent.focus({ preventScroll: true });
+        const shown = how === 'sent'
+          ? popup.show('sent', { heading: 'Request sent', message: [`${thanks(name)} I'll confirm by email within one business day.`], when: confirmTime.innerHTML, back: sent })
+          : popup.show('email-app', { back: sent });
+        if (!shown) sent.focus({ preventScroll: true });
       } catch {
         status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
+        popup.show('error');
       } finally {
         submitBtn.disabled = false;
-        if (hadFocus && !form.hidden) submitBtn.focus();
+        if (hadFocus && !form.hidden && !popup.isOpen()) submitBtn.focus();
         // A failed send keeps the form open: its error line sits under the button, which can be at the bottom of the screen.
         if (!form.hidden) status.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
       }
@@ -402,20 +477,26 @@
       e.preventDefault();
       // Disabling the button while sending takes keyboard focus off it, so it gets focus back afterwards.
       const hadFocus = document.activeElement === submitBtn;
+      const name = firstName(form);
+      popup.show('sending', { back: submitBtn });
       submitBtn.disabled = true;
       try {
         const how = await sendForm(form, `${form.dataset.subject} from ${new FormData(form).get('name')}`);
         if (how === 'sent') {
           form.reset();
-          status.textContent = form.dataset.thanks || "Thanks! Your message is on its way. I'll be in touch within one business day.";
+          const message = `${thanks(name)} ${form.dataset.thanks || "Your message is on its way. I'll be in touch within one business day."}`;
+          status.textContent = message;
+          popup.show('sent', { heading: form.dataset.sentTitle || 'Message sent', message: [message] });
         } else {
           status.textContent = `Almost done: press send in your email app. If it didn't open, email me at ${EMAIL}.`;
+          popup.show('email-app');
         }
       } catch {
         status.textContent = `Something went wrong. Please email me directly at ${EMAIL}.`;
+        popup.show('error');
       } finally {
         submitBtn.disabled = false;
-        if (hadFocus) submitBtn.focus();
+        if (hadFocus && !popup.isOpen()) submitBtn.focus();
         // The result line sits under the button, which can be at the very bottom of the screen.
         status.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
       }
